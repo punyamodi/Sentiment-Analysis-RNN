@@ -11,9 +11,9 @@ from sentiment.data.loader import get_word_index
 from sentiment.data.preprocessor import encode_text
 
 MODEL_OPTIONS = {
-    "LSTM": "models/saved/lstm_best.keras",
-    "BiLSTM": "models/saved/bilstm_best.keras",
-    "SimpleRNN": "models/saved/simple_rnn_best.keras",
+    "LSTM": "models/saved/lstm_best.h5",
+    "BiLSTM": "models/saved/bilstm_best.h5",
+    "SimpleRNN": "models/saved/simple_rnn_best.h5",
 }
 MAXLEN = 200
 
@@ -59,20 +59,38 @@ def main():
         )
         return
 
-    text = st.text_area("Enter a movie review:", height=150, placeholder="Type your review here...")
+    if "result" not in st.session_state:
+        st.session_state.result = None
+    if "prefill" not in st.session_state:
+        st.session_state.prefill = ""
+
+    query_review = st.query_params.get("review", "")
+    if query_review and st.session_state.prefill != query_review:
+        st.session_state.prefill = query_review
+        if model is not None:
+            st.session_state.result = predict_sentiment(model, query_review, word_index)
+
+    text = st.text_area(
+        "Enter a movie review:",
+        value=st.session_state.prefill,
+        height=150,
+        placeholder="Type your review here...",
+    )
 
     if st.button("Analyze", type="primary"):
         if not text.strip():
             st.warning("Please enter some text.")
         else:
             with st.spinner("Analyzing..."):
-                result = predict_sentiment(model, text, word_index)
+                st.session_state.result = predict_sentiment(model, text, word_index)
 
-            col1, col2 = st.columns(2)
-            col1.metric("Sentiment", result["label"])
-            col2.metric("Confidence", f"{result['confidence']:.1%}")
-            st.progress(result["probability"])
-            st.caption(f"Raw probability: {result['probability']:.4f}")
+    if st.session_state.result is not None:
+        result = st.session_state.result
+        col1, col2 = st.columns(2)
+        col1.metric("Sentiment", result["label"])
+        col2.metric("Confidence", f"{result['confidence']:.1%}")
+        st.progress(result["probability"])
+        st.caption(f"Raw probability: {result['probability']:.4f}")
 
     st.divider()
     st.subheader("Try an example")

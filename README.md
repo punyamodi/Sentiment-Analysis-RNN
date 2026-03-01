@@ -101,7 +101,7 @@ The [IMDB Large Movie Review Dataset](https://ai.stanford.edu/~amaas/data/sentim
 | Training  | 25 000  |
 | Testing   | 25 000  |
 
-The dataset is downloaded automatically by TensorFlow on first use via `tf.keras.datasets.imdb`.
+The dataset is downloaded automatically by TensorFlow on first use via `tf.h5.datasets.imdb`.
 
 ---
 
@@ -132,7 +132,7 @@ Trained models are saved to `models/saved/`. Metrics and plots go to `results/`.
 
 ```bash
 python scripts/evaluate.py \
-  --model-path models/saved/lstm_best.keras \
+  --model-path models/saved/lstm_best.h5 \
   --config config/lstm.yaml
 ```
 
@@ -141,13 +141,13 @@ python scripts/evaluate.py \
 Single review:
 ```bash
 python scripts/predict.py \
-  --model-path models/saved/lstm_best.keras \
+  --model-path models/saved/lstm_best.h5 \
   --text "An outstanding film with brilliant performances."
 ```
 
 Interactive mode:
 ```bash
-python scripts/predict.py --model-path models/saved/lstm_best.keras
+python scripts/predict.py --model-path models/saved/lstm_best.h5
 ```
 
 ### Web App
@@ -158,7 +158,18 @@ streamlit run app/app.py
 
 ---
 
-## Configuration
+## Screenshots
+
+| Home | Positive Result |
+|:----:|:---------------:|
+| ![Home](docs/screenshots/01_home.png) | ![Positive](docs/screenshots/02_positive_result.png) |
+
+| Negative Result | Neutral Review |
+|:---------------:|:--------------:|
+| ![Negative](docs/screenshots/03_negative_result.png) | ![Neutral](docs/screenshots/04_neutral_result.png) |
+
+---
+
 
 All hyperparameters live in YAML files under `config/`. Example:
 

@@ -29,7 +29,7 @@ def get_callbacks(config: dict, model_name: str) -> list:
             verbose=1,
         ),
         ModelCheckpoint(
-            filepath=str(model_dir / f"{model_name}_best.keras"),
+            filepath=str(model_dir / f"{model_name}_best.h5"),
             monitor="val_loss",
             save_best_only=True,
             verbose=1,
